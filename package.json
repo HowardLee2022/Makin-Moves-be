@@ -9,7 +9,8 @@
     "sequelize": "^6.29.1"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "seed":"node seeds/seed.js"
   },
   "name": "makin-moves-be",
   "description": "",
