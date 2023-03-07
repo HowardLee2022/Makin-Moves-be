@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 
 const { Trips } = require('../models');
 
@@ -11,7 +12,7 @@ router.get("/", (req, res) => {
     .catch((err) => {
       console.log(err);
       res.status(500).json({
-        msg: "womp womp womp",
+        msg: "Somethign Went wrong",
         err,
       });
     });
@@ -21,91 +22,91 @@ router.get("/", (req, res) => {
 
 
 router.post("/", (req, res) => {
-  // const token = req.headers?.authorization?.split(" ")[1];
-  // if (!token) {
-  //   return res
-  //     .status(403)
-  //     .json({ msg: "you must be logged in to create a play!" });
-  // }
-  // try {
-  //const tokenData = jwt.verify(token, process.env.JWT_SECRET);
-  Trips.create({
-    title: req.body.title,
-    description: req.body.description,
-    guest: req.body.guest,
-    start: req.body.start,
-    end: req.body.end,
-    cost: req.body.cost,
-    UserId: req.body.UserId,
-  })
-    .then((newTrip) => {
-      res.json(newTrip);
+  const token = req.headers?.authorization?.split(" ")[1];
+  if (!token) {
+    return res
+      .status(403)
+      .json({ msg: "Must be logged in to create Trip" });
+  }
+  try {
+    const tokenData = jwt.verify(token, process.env.JWT_SECRET);
+    Trips.create({
+      title: req.body.title,
+      description: req.body.description,
+      guest: req.body.guest,
+      start: req.body.start,
+      end: req.body.end,
+      cost: req.body.cost,
+      UserId: tokenData.id,
     })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        msg: "something didnt work",
-        err,
+      .then((newTrip) => {
+        res.json(newTrip);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({
+          msg: "Something went wrong when creating Trip",
+          err,
+        });
       });
-    });
-  // } catch (err) {
-  //   return res.status(403).json({ msg: "invalid token" });
-  // }
+  } catch (err) {
+    return res.status(403).json({ msg: "invalid token" });
+  }
 });
 
 
 router.put("/:tripId", (req, res) => {
-  // const token = req.headers?.authorization?.split(" ")[1];
-  // if (!token) {
-  //   return res
-  //     .status(403)
-  //     .json({ msg: "you must be logged in to edit a play!" });
-  // }
-  // try {
-  // const tokenData = jwt.verify(token, process.env.JWT_SECRET);
-  Trips.findByPk(req.params.tripId)
-    .then((foundTrip) => {
-      if (!foundTrip) {
-        return res.status(404).json({ msg: "no such Trip" });
-      }
-      // if (foundPlay.UserId !== tokenData.id) {
-      //   return res
-      //     .status(403)
-      //     .json({ msg: "you can only edit plays you created!" });
-      // }
-      Trips.update(
-        {
-          title: req.body.title,
-          description: req.body.description,
-          guest: req.body.guest,
-          start: req.body.start,
-          end: req.body.end,
-          cost: req.body.cost,
-        },
-        {
-          where: {
-            id: req.params.tripId,
-          },
+  const token = req.headers?.authorization?.split(" ")[1];
+  if (!token) {
+    return res
+      .status(403)
+      .json({ msg: "Must be logged in to edit Trip" });
+  }
+  try {
+    const tokenData = jwt.verify(token, process.env.JWT_SECRET);
+    Trips.findByPk(req.params.tripId)
+      .then((foundTrip) => {
+        if (!foundTrip) {
+          return res.status(404).json({ msg: "no such Trip" });
         }
-      ).then((delTrip) => {
+        if (foundTrip.UserId !== tokenData.id) {
+          return res
+            .status(403)
+            .json({ msg: "You can only edit trips that's yours" });
+        }
+        Trips.update(
+          {
+            title: req.body.title,
+            description: req.body.description,
+            guest: req.body.guest,
+            start: req.body.start,
+            end: req.body.end,
+            cost: req.body.cost,
+          },
+          {
+            where: {
+              id: req.params.tripId,
+            },
+          }
+        ).then((delTrip) => {
           res.json(delTrip);
-      }
-      ).catch((err) => {
+        }
+        ).catch((err) => {
+          console.log(err);
+          res.status(500).json({
+            msg: "Something went wrong with Updating trip",
+            err,
+          });
+        });
+      }).catch((err) => {
         console.log(err);
         res.status(500).json({
-        msg: "uh oh",
-        err,
+          msg: "Somethign went wrong with finding trip with ID",
+          err,
         });
       });
-    }).catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        msg: "womp womp womp",
-        err,
-      });
-    });
-  // } catch (err) {
-  //   return res.status(403).json({ msg: "invalid token" });
-  // }
+  } catch (err) {
+    return res.status(403).json({ msg: "invalid token" });
+  }
 });
 module.exports = router;
