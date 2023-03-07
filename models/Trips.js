@@ -4,8 +4,12 @@ const sequelize = require('../config/connection');
 class Trips extends Model {}
 
 Trips.init({
-    days:{
-        type: DataTypes.INTEGER,
+    title:{
+        type: DataTypes.STRING,
+        allowNull:false,
+    },
+    description:{
+        type: DataTypes.STRING,
         allowNull:false,
     },
     guest: {
@@ -13,19 +17,19 @@ Trips.init({
          allowNull:false,
     },
     start:{
-        type:DataTypes.STRING,
-        allowNull:false,
-        validate:{
-            len:[6]
-        }
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+        isDate: true,
     },
     end: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+        isDate: true,
+    },
+    cost:{
+        type: DataTypes.INTEGER,
         allowNull:false,
-        validate:{
-            len:[6]
-        }
-    }
+    },
 },{
     sequelize,
 });
