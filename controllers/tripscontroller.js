@@ -46,7 +46,7 @@ router.post("/", (req, res) => {
         console.log(err);
         res.status(500).json({
           msg: "Something went wrong when creating Trip",
-          err,
+          err
         });
       });
   } catch (err) {
