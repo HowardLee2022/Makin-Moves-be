@@ -19,6 +19,20 @@ router.get("/", (req, res) => {
 });
 
 
+router.get("/:id", (req, res) => {
+  Trips.findByPk(req.params.id)
+    .then((Trips) => {
+      res.json(Trips);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        msg: "Somethign Went wrong",
+        err,
+      });
+    });
+});
+
 
 
 router.post("/", (req, res) => {
