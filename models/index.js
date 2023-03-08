@@ -5,6 +5,8 @@ const Activities = require("./Activities")
 
 User.hasMany(Trips);
 Trips.belongsTo(User);
+Trips.hasMany(Days);
+Days.belongsTo(Trips)
 
 // Trips.belongsTo(User,{
 //     onDelete:"CASCADE",

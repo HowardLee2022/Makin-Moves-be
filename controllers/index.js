@@ -7,5 +7,8 @@ router.use("/api/users", userRoutes);
 const tripRoutes = require('./tripscontroller');
 router.use("/api/trips", tripRoutes);
 
+const dayRoutes = require('./dayController');
+router.use("/api/day", dayRoutes);
+
 
 module.exports = router;
