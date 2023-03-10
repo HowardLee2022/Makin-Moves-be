@@ -3,10 +3,23 @@ const User = require("./User")
 const Days = require("./Days")
 const Activities = require("./Activities")
 
-User.hasMany(Trips);
-Trips.belongsTo(User);
+// User.hasMany(Trips);
+// Trips.belongsTo(User);
+
 Trips.hasMany(Days);
 Days.belongsTo(Trips)
+
+User.belongsToMany(Trips, {
+    through: "User_Trip",
+    as: "trip",
+    foreignKey: "User_id",
+  });
+
+Trips.belongsToMany(User, {
+    through: "User_Trip",
+    as: "user",
+    foreignKey: "Trips_id",
+});
 
 // Trips.belongsTo(User,{
 //     onDelete:"CASCADE",

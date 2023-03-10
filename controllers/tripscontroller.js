@@ -2,38 +2,28 @@ const express = require('express');
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
-const { Trips } = require('../models');
+const { Trips,User } = require('../models');
 
-  // router.get("/", (req, res) => {
-  //   Trips.findAll({
-  //     where:{userId:req.body.userId}
-  //   })
-  //     .then((allTrips) => {
-  //       res.json(allTrips);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       res.status(500).json({
-  //         msg: "Somethign Went wrong",
-  //         err,
-  //       });
-  //     });
-  // });
-
-  router.get("/", (req, res) => {
-    Trips.findAll()
-      .then((allTrips) => {
-        res.json(allTrips);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).json({
-          msg: "Somethign Went wrong",
-          err,
-        });
+router.get("/", (req, res) => {
+  Trips.findAll({
+    include: [
+      {
+        model: User,
+        as: "user"
+      },
+    ],
+  })
+    .then((allTrips) => {
+      res.json(allTrips);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        msg: "Somethign Went wrong",
+        err,
       });
   });
-
+})
 
 
 router.get("/:id", (req, res) => {
@@ -49,6 +39,19 @@ router.get("/:id", (req, res) => {
       });
     });
 });
+
+
+router.post("/adduser", (req, res) => {
+    Trips.findByPk(req.body.tripId)
+    .then((Trips) =>{
+      Trips.addUser(req.body.userId)
+      .then((data) => {
+        res.json(data)
+      })
+      
+    })
+});
+
 
 
 
@@ -68,16 +71,18 @@ router.post("/", (req, res) => {
       start: req.body.start,
       end: req.body.end,
       cost: req.body.cost,
-      UserId: tokenData.id,
     })
       .then((newTrip) => {
-        res.json(newTrip);
+        newTrip.addUser(tokenData.id)
+        .then((data) => {
+        res.json(data)
+      })  
       })
       .catch((err) => {
         console.log(err);
         res.status(500).json({
           msg: "Something went wrong when creating Trip",
-          err,
+          err
         });
       });
   } catch (err) {
