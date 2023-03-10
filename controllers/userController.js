@@ -71,6 +71,23 @@ router.post("/", (req, res) => {
       });
   });
   
+  router.post("/addtrip", (req, res) => {
+    User.findOne({
+      where:{
+        email:req.body.email
+      }
+    })
+      .then((user) => {
+        user.addTrip(req.body.tripId)
+          .then((data) => {
+            res.json(data)
+          })
+  
+      })
+  });
+  
+
+
   router.get("/isValidToken", (req, res) => {
     const token = req.headers?.authorization?.split(" ")[1];
     if (!token) {
@@ -94,7 +111,16 @@ router.post("/", (req, res) => {
 
   //GET ALL USERS
 router.get("/",(req,res)=>{
-    User.findAll().then(userData=>{
+    User.findAll(
+      {
+        include: [
+          {
+            model: Trips,
+            as: "trip"
+          },
+        ],
+      }
+    ).then(userData=>{
      res.json(userData)
     }).catch(err=>{
      console.log(err);
@@ -105,7 +131,12 @@ router.get("/",(req,res)=>{
  //GET USERS W/ TRIPS
  router.get("/:id", (req, res) => {
   User.findByPk(req.params.id, {
-    include: [Trips],
+    include: [
+      {
+        model: Trips,
+        as: "trip"
+      },
+    ],
   })
     .then((userData) => {
       res.json(userData);
