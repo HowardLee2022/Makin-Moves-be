@@ -4,19 +4,36 @@ const jwt = require("jsonwebtoken");
 
 const { Trips } = require('../models');
 
-router.get("/", (req, res) => {
-  Trips.findAll()
-    .then((allTrips) => {
-      res.json(allTrips);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        msg: "Somethign Went wrong",
-        err,
+  // router.get("/", (req, res) => {
+  //   Trips.findAll({
+  //     where:{userId:req.body.userId}
+  //   })
+  //     .then((allTrips) => {
+  //       res.json(allTrips);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       res.status(500).json({
+  //         msg: "Somethign Went wrong",
+  //         err,
+  //       });
+  //     });
+  // });
+
+  router.get("/", (req, res) => {
+    Trips.findAll()
+      .then((allTrips) => {
+        res.json(allTrips);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({
+          msg: "Somethign Went wrong",
+          err,
+        });
       });
-    });
-});
+  });
+
 
 
 router.get("/:id", (req, res) => {
