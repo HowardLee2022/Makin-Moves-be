@@ -2,10 +2,17 @@ const express = require('express');
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
-const { Trips } = require('../models');
+const { Trips,User } = require('../models');
 
 router.get("/", (req, res) => {
-  Trips.findAll()
+  Trips.findAll({
+    include: [
+      {
+        model: User,
+        as: "user"
+      },
+    ],
+  })
     .then((allTrips) => {
       res.json(allTrips);
     })
@@ -34,6 +41,19 @@ router.get("/:id", (req, res) => {
 });
 
 
+router.post("/adduser", (req, res) => {
+    Trips.findByPk(req.body.tripId)
+    .then((Trips) =>{
+      Trips.addUser(req.body.userId)
+      .then((data) => {
+        res.json(data)
+      })
+      
+    })
+});
+
+
+
 
 router.post("/", (req, res) => {
   const token = req.headers?.authorization?.split(" ")[1];
@@ -51,10 +71,12 @@ router.post("/", (req, res) => {
       start: req.body.start,
       end: req.body.end,
       cost: req.body.cost,
-      UserId: tokenData.id,
     })
       .then((newTrip) => {
-        res.json(newTrip);
+        newTrip.addUser(tokenData.id)
+        .then((data) => {
+        res.json(data)
+      })  
       })
       .catch((err) => {
         console.log(err);
