@@ -7,10 +7,6 @@ Days.init({
     DayName:{
         type:DataTypes.STRING,
         allowNull: false
-    },
-    activities:{
-        type: DataTypes.STRING,
-        allowNull:true,
     }
 },{
     sequelize,

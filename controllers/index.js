@@ -11,4 +11,8 @@ const dayRoutes = require('./dayController');
 router.use("/api/day", dayRoutes);
 
 
+const activitieRoutes = require('./activitiesController');
+router.use("/api/activitie", activitieRoutes);
+
+
 module.exports = router;
