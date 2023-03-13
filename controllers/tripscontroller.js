@@ -22,12 +22,19 @@ router.get("/", (req, res) => {
         msg: "Somethign Went wrong",
         err,
       });
-    });
-});
+  });
+})
 
 
 router.get("/:id", (req, res) => {
-  Trips.findByPk(req.params.id)
+  Trips.findByPk(req.params.id,{
+    
+      include: [
+        {
+          model: User,
+          as: 'user'
+        },
+      ]})
     .then((Trips) => {
       res.json(Trips);
     })

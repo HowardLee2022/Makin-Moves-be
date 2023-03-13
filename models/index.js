@@ -37,7 +37,8 @@ Trips.belongsToMany(User, {
 
 // Trips.hasMany(Days)
 
-// Days.hasMany(Activities)
+Days.hasMany(Activities)
+Activities.belongsTo(Days)
 
 
 module.exports ={

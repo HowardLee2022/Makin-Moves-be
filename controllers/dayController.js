@@ -1,6 +1,6 @@
 const express=require('express');
 const router = express.Router();
-const {Days, Trips} = require('../models');
+const {Days, Trips, Activities} = require('../models');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -9,7 +9,6 @@ const jwt = require("jsonwebtoken");
 router.post("/", (req, res) => {
       Days.create({
       DayName:req.body.DayName,
-      activities: req.body.activities,
       TripId:req.body.TripId
       })
         .then((newDay) => {
@@ -26,7 +25,15 @@ router.post("/", (req, res) => {
 
 
   router.get("/:id", (req, res) => {
-    Days.findByPk(req.params.id)
+    Days.findByPk(req.params.id, {
+    
+      include: [
+        {
+          model: Activities,
+          as: 'Activities'
+        },
+      ]}
+      )
       .then((Days) => {
         res.json(Days);
       })
