@@ -28,7 +28,6 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   Trips.findByPk(req.params.id,{
-    
       include: [
         {
           model: User,
@@ -74,7 +73,7 @@ router.post("/", (req, res) => {
     Trips.create({
       title: req.body.title,
       description: req.body.description,
-      guest: req.body.guest,
+      owner: tokenData.id,
       start: req.body.start,
       end: req.body.end,
       cost: req.body.cost,
@@ -112,7 +111,9 @@ router.put("/:tripId", (req, res) => {
         if (!foundTrip) {
           return res.status(404).json({ msg: "no such Trip" });
         }
-        if (foundTrip.UserId !== tokenData.id) {
+        if (foundTrip.owner !== tokenData.id) {
+          console.log(foundTrip.owner)
+          console.log(tokenData.id)
           return res
             .status(403)
             .json({ msg: "You can only edit trips that's yours" });
@@ -121,7 +122,6 @@ router.put("/:tripId", (req, res) => {
           {
             title: req.body.title,
             description: req.body.description,
-            guest: req.body.guest,
             start: req.body.start,
             end: req.body.end,
             cost: req.body.cost,
