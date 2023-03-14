@@ -12,8 +12,8 @@ Trips.init({
         type: DataTypes.STRING,
         allowNull:false,
     },
-    guest: {
-         type: DataTypes.STRING,
+    owner: {
+         type: DataTypes.INTEGER,
          allowNull:false,
     },
     start:{
