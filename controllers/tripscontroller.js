@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const dayjs = require('dayjs')
 
-const { Trips,User } = require('../models');
+const { Trips,User, Days } = require('../models');
 
 router.get("/", (req, res) => {
   Trips.findAll({
@@ -68,6 +69,9 @@ router.post("/", (req, res) => {
       .status(403)
       .json({ msg: "Must be logged in to create Trip" });
   }
+  const num = (dayjs(req.body.end).diff(dayjs(req.body.star), 'days') + 1)
+  const arrayday =[];
+  
   try {
     const tokenData = jwt.verify(token, process.env.JWT_SECRET);
     Trips.create({
@@ -79,6 +83,14 @@ router.post("/", (req, res) => {
       cost: req.body.cost,
     })
       .then((newTrip) => {
+        for(i=0; i<num; i++){
+          const newObj = {
+            DayName: "day " + (i+1),
+            TripId: newTrip.id
+          }
+          arrayday.push(newObj)
+        }
+        Days.bulkCreate(arrayday)
         newTrip.addUser(tokenData.id)
         .then((data) => {
         res.json(data)
