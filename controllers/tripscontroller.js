@@ -164,4 +164,54 @@ router.put("/:tripId", (req, res) => {
     return res.status(403).json({ msg: "invalid token" });
   }
 });
+
+router.delete("/:tripId", (req, res) => {
+  const token = req.headers?.authorization?.split(" ")[1];
+  if (!token) {
+    return res
+      .status(403)
+      .json({ msg: "you must be logged in to delete a play!" });
+  }
+  try {
+    const tokenData = jwt.verify(token, process.env.JWT_SECRET);
+    Trips.findByPk(req.params.tripId)
+      .then((foundTrip) => {
+        if (!foundTrip) {
+          return res.status(404).json({ msg: "no such Trip!" });
+        }
+        if (foundTrip.owner !== tokenData.id) {
+          return res
+            .status(403)
+            .json({ msg: "you can only delete trip you created!" });
+        }
+        Trips.destroy({
+          where: {
+            id: req.params.tripId,
+          },
+        })
+          .then((delTrip) => {
+            res.json(delTrip);
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({
+              msg: "womp womp womp",
+              err,
+            });
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json({
+          msg: "womp womp womp",
+          err,
+        });
+      });
+  } catch (err) {
+    return res.status(403).json({ msg: "invalid token" });
+  }
+});
+
+
+
 module.exports = router;
