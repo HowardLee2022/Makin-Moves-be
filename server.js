@@ -108,9 +108,9 @@ app.get("/", (req, res) => {
 });
 
 sequelize.sync({ force: false }).then(function () {
-  app.listen(PORT, function () {
+  server.listen(PORT, function () {
     console.log("App listening on PORT " + PORT);
   });
 });
 
-server.listen(4000, () => "Server is running on port 4000");
+// server.listen(4000, () => "Server is running on port 4000");
