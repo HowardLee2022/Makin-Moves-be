@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-app.use(cors());
+app.use(cors({origin:process.env.SOCKET_CORS_URL}));
 app.use(allRoutes);
 
 
@@ -28,7 +28,7 @@ const server = http.createServer(app);
 // Create an io server and allow for CORS from http://localhost:3000 with GET and POST methods
 const io = new Server(server, {
   cors: {
-    origin: process.env.SOCKET_CORS_URL,
+    origins: [process.env.SOCKET_CORS_URL, "http://localhost:3000"],
     methods: ["GET", "POST"],
   },
 });
