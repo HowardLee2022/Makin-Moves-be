@@ -69,7 +69,7 @@ router.post("/", (req, res) => {
       .status(403)
       .json({ msg: "Must be logged in to create Trip" });
   }
-  const num = (dayjs(req.body.end).diff(dayjs(req.body.star), 'days') + 1)
+  const num = (dayjs(req.body.end).diff(dayjs(req.body.start), 'days'))
   const arrayday =[];
   
   try {
